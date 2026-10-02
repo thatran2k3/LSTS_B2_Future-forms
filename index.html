@@ -153,6 +153,53 @@
             font-size: 0.9em;
         }
 
+        /* --- NEW: Score banner styles --- */
+        #score-banner {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: 2px solid transparent;
+        }
+
+        #score-banner.show {
+            display: block;
+        }
+
+        #score-banner.good {
+            background-color: #e8f6f0;
+            border-color: var(--correct-color);
+            color: var(--correct-color);
+        }
+
+        #score-banner.medium {
+            background-color: #fef9e7;
+            border-color: #f39c12;
+            color: #b9770e;
+        }
+
+        #score-banner.low {
+            background-color: #fdedec;
+            border-color: var(--incorrect-color);
+            color: var(--incorrect-color);
+        }
+
+        #score-banner .score-number {
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #score-banner .score-message {
+            font-size: 1rem;
+            font-weight: normal;
+            color: var(--text-color);
+            margin-top: 8px;
+        }
+
         .button-container {
             text-align: center;
             margin-top: 30px;
@@ -198,6 +245,9 @@
             <p class="exercise-instruction">Fill in the blanks with the correct future form of the verb in brackets. Use contractions (e.g., 'll, 'm, 's) where natural.</p>
             <div id="fill-in-blank-container"></div>
         </section>
+
+        <!-- NEW: Score banner -->
+        <div id="score-banner"></div>
 
         <div class="button-container">
             <button id="check-answers-btn">Check My Answers</button>
@@ -250,11 +300,11 @@
                 explanation: 'After "as soon as" in a future time clause, we use the present simple.'
             },
             {
-           type: 'mc',
-    question: 'A: "I can\'t open this jar." B: "Don\'t worry, I ____ you."',
-    options: ['am helping', 'will help', 'help', 'am going to help'],
-    correct: 'will help',
-    explanation: 'This is an instant decision made at the moment of speaking, so we use "will".'
+                type: 'mc',
+                question: 'A: "I can\'t open this jar." B: "Don\'t worry, I ____ you."',
+                options: ['am helping', 'will help', 'help', 'am going to help'],
+                correct: 'will help',
+                explanation: 'This is an instant decision made at the moment of speaking, so we use "will".'
             },
             {
                 type: 'mc',
@@ -273,10 +323,10 @@
                 explanation: 'Instant decision.'
             },
             {
-                  type: 'fib',
-    question: 'Watch out! That chair is wobbling — you ____ (fall)!',
-    correct: ['are going to fall', "'re going to fall"],
-    explanation: 'The chair is wobbling right now (present evidence), so we use "be going to" for the prediction.'
+                type: 'fib',
+                question: 'Watch out! That chair is wobbling — you ____ (fall)!',
+                correct: ['are going to fall', "'re going to fall"],
+                explanation: 'The chair is wobbling right now (present evidence), so we use "be going to" for the prediction.'
             },
             {
                 type: 'fib',
@@ -297,10 +347,10 @@
                 explanation: 'General prediction with "hope".'
             },
             {
-                   type: 'fib',
-    question: 'She ____ (study) medicine — it has always been her dream.',
-    correct: ['is going to study', "'s going to study"],
-    explanation: 'Her long-standing dream shows this is a settled intention, so we use "be going to".'
+                type: 'fib',
+                question: 'She ____ (study) medicine — it has always been her dream.',
+                correct: ['is going to study', "'s going to study"],
+                explanation: 'Her long-standing dream shows this is a settled intention, so we use "be going to".'
             },
             {
                 type: 'fib',
@@ -388,6 +438,10 @@
         }
 
         function checkAnswers() {
+            // Track score across both exercises
+            let correctCount = 0;
+            const totalQuestions = multipleChoiceQuestions.length + fillInBlankQuestions.length;
+
             // Check Multiple Choice
             multipleChoiceQuestions.forEach((q, index) => {
                 const selectedInput = document.querySelector(`input[name="mc-question-${index}"]:checked`);
@@ -405,6 +459,7 @@
                         feedbackEl.textContent = 'Correct! ' + q.explanation;
                         feedbackEl.classList.add('correct');
                         selectedInput.parentElement.classList.add('correct');
+                        correctCount++;
                     } else {
                         feedbackEl.textContent = `Incorrect. The correct answer is "${q.correct}". ` + q.explanation;
                         feedbackEl.classList.add('incorrect');
@@ -448,12 +503,47 @@
                     feedbackEl.textContent = 'Correct! ' + q.explanation;
                     feedbackEl.classList.add('correct');
                     inputEl.classList.add('correct');
+                    correctCount++;
                 } else {
                     feedbackEl.textContent = `Incorrect. A correct answer is "${q.correct[0]}". ` + q.explanation;
                     feedbackEl.classList.add('incorrect');
                     inputEl.classList.add('incorrect');
                 }
             });
+
+            // --- NEW: Display score banner ---
+            showScore(correctCount, totalQuestions);
+        }
+
+        // --- NEW: Score display function ---
+        function showScore(correct, total) {
+            const percentage = Math.round((correct / total) * 100);
+            const banner = document.getElementById('score-banner');
+
+            // Remove any previous colour class
+            banner.classList.remove('good', 'medium', 'low');
+
+            // Pick colour band and message based on score
+            let message = '';
+            if (percentage >= 80) {
+                banner.classList.add('good');
+                message = 'Excellent work! You have a strong grasp of the future forms.';
+            } else if (percentage >= 50) {
+                banner.classList.add('medium');
+                message = 'Good effort! Review the explanations for the questions you missed and try again.';
+            } else {
+                banner.classList.add('low');
+                message = 'Keep practising! Read the grammar notes again, then have another go.';
+            }
+
+            banner.innerHTML = `
+                <span class="score-number">${correct} / ${total} &nbsp;—&nbsp; ${percentage}%</span>
+                <span class="score-message">${message}</span>
+            `;
+            banner.classList.add('show');
+
+            // Scroll the score into view so students notice it
+            banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
         // --- INITIALIZATION ---
