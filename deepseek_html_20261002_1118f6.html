@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2 Future Forms Practice</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #f4f7f6;
+            --card-background: #ffffff;
+            --correct-color: #27ae60;
+            --incorrect-color: #e74c3c;
+            --text-color: #34495e;
+            --border-color: #bdc3c7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-background);
+            padding: 25px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--secondary-color);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin-top: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .exercise-instruction {
+            font-style: italic;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+        }
+
+        .question {
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fdfdfd;
+            border: 1px solid #f0f0f0;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #ecf0f1;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .option.selected {
+            background-color: #eaf4fc;
+            border-color: var(--secondary-color);
+        }
+
+        .option.correct {
+            background-color: #e8f6f0;
+            border-color: var(--correct-color);
+            font-weight: bold;
+        }
+
+        .option.incorrect {
+            background-color: #fdedec;
+            border-color: var(--incorrect-color);
+        }
+
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .feedback.correct {
+            color: var(--correct-color);
+            background-color: #e8f6f0;
+        }
+
+        .feedback.incorrect {
+            color: var(--incorrect-color);
+            background-color: #fdedec;
+        }
+
+        .fill-in-blank {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .fill-in-blank input[type="text"] {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            min-width: 200px;
+        }
+
+        .fill-in-blank .feedback {
+            display: block;
+            width: 100%;
+        }
+
+        .fill-in-blank .correct-answer {
+            font-style: italic;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        #check-answers-btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            font-weight: bold;
+        }
+
+        #check-answers-btn:hover {
+            background-color: #2980b9;
+        }
+
+        #check-answers-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Future Forms Practice</h1>
+        <p>Test your understanding of <strong>will/won't</strong>, <strong>be going to</strong>, <strong>present continuous</strong>, and <strong>present simple</strong> for the future.</p>
+
+        <!-- Exercise 1: Multiple Choice -->
+        <section>
+            <h2>Exercise 1: Choose the Best Option</h2>
+            <p class="exercise-instruction">Read the sentences and choose the correct future form.</p>
+            <div id="multiple-choice-container"></div>
+        </section>
+
+        <!-- Exercise 2: Fill in the Blanks -->
+        <section>
+            <h2>Exercise 2: Complete the Sentences</h2>
+            <p class="exercise-instruction">Fill in the blanks with the correct future form of the verb in brackets. Use contractions (e.g., 'll, 'm, 's) where natural.</p>
+            <div id="fill-in-blank-container"></div>
+        </section>
+
+        <div class="button-container">
+            <button id="check-answers-btn">Check My Answers</button>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA FOR EXERCISES ---
+        const multipleChoiceQuestions = [
+            {
+                type: 'mc',
+                question: 'A: "The phone is ringing." B: "Don\'t worry, I ____ it."',
+                options: ['am getting', 'will get', 'get', 'am going to get'],
+                correct: 'will get',
+                explanation: 'This is an instant decision made at the moment of speaking, so we use "will".'
+            },
+            {
+                type: 'mc',
+                question: 'Look at those dark clouds! It ____ rain.',
+                options: ['will', 'is going to', 'is raining', 'rains'],
+                correct: 'is going to',
+                explanation: 'This is a prediction based on present evidence (dark clouds), so we use "be going to".'
+            },
+            {
+                type: 'mc',
+                question: 'I can\'t meet you tomorrow. I ____ my grandparents.',
+                options: ['will visit', 'am visiting', 'visit', 'am going to visit'],
+                correct: 'am visiting',
+                explanation: 'This is a fixed arrangement with a specific time (tomorrow). The present continuous is best here.'
+            },
+            {
+                type: 'mc',
+                question: 'The film ____ at 8:30, so we should arrive by 8:15.',
+                options: ['is going to start', 'will start', 'starts', 'is starting'],
+                correct: 'starts',
+                explanation: 'This is a timetable or schedule, so we use the present simple.'
+            },
+            {
+                type: 'mc',
+                question: 'I\'ve decided! I ____ a new language next year.',
+                options: ['am learning', 'will learn', 'learn', 'am going to learn'],
+                correct: 'am going to learn',
+                explanation: 'This is a plan or intention that has already been decided, so we use "be going to".'
+            },
+            {
+                type: 'mc',
+                question: 'As soon as I ____ my homework, I\'ll go out.',
+                options: ['will finish', 'finish', 'am finishing', 'am going to finish'],
+                correct: 'finish',
+                explanation: 'After "as soon as" in a future time clause, we use the present simple.'
+            },
+            {
+                type: 'mc',
+                question: 'According to the weather report, it ____ sunny tomorrow.',
+                options: ['is being', 'will be', 'is going to be', 'is'],
+                correct: 'will be',
+                explanation: 'This is a general prediction based on a report, often with verbs like "think", "expect", or "according to".'
+            },
+            {
+                type: 'mc',
+                question: 'A: "What are your plans for the weekend?" B: "I ____ to the beach with my family. We\'ve booked a hotel."',
+                options: ['am going to go', 'will go', 'am going', 'go'],
+                correct: 'am going',
+                explanation: 'The plan is confirmed and arranged (hotel is booked), so the present continuous is appropriate.'
+            }
+        ];
+
+        const fillInBlankQuestions = [
+            {
+                type: 'fib',
+                question: 'A: "I\'m really hungry." B: "I ____ (make) you a sandwich."',
+                correct: ['will make', "'ll make"],
+                explanation: 'Instant decision.'
+            },
+            {
+                type: 'fib',
+                question: 'Watch out! You ____ (fall) off that chair!',
+                correct: ['are going to fall', "'re going to fall"],
+                explanation: 'Prediction based on evidence.'
+            },
+            {
+                type: 'fib',
+                question: 'We ____ (fly) to London on Friday. The tickets are booked.',
+                correct: ['are flying', "'re flying"],
+                explanation: 'Fixed future arrangement.'
+            },
+            {
+                type: 'fib',
+                question: 'The train ____ (leave) at 6:45 PM.',
+                correct: ['leaves'],
+                explanation: 'Timetable/Schedule.'
+            },
+            {
+                type: 'fib',
+                question: 'I hope the weather ____ (be) nice for our trip.',
+                correct: ['will be', "'ll be"],
+                explanation: 'General prediction with "hope".'
+            },
+            {
+                type: 'fib',
+                question: 'She ____ (buy) a new car next month. She has been saving for a long time.',
+                correct: ['is going to buy', "'s going to buy"],
+                explanation: 'Plan/Intention.'
+            },
+            {
+                type: 'fib',
+                question: 'I can\'t come to the party. I ____ (meet) my tutor at 3 PM.',
+                correct: ['am meeting', "'m meeting"],
+                explanation: 'Fixed arrangement.'
+            },
+            {
+                type: 'fib',
+                question: 'Before you ____ (go) to bed, please turn off the lights.',
+                correct: ['go'],
+                explanation: 'Future time clause with "before".'
+            }
+        ];
+
+        // --- FUNCTIONS ---
+        function renderQuestions() {
+            const mcContainer = document.getElementById('multiple-choice-container');
+            mcContainer.innerHTML = '';
+            multipleChoiceQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `mc-question-${index}`;
+
+                const questionText = document.createElement('p');
+                questionText.className = 'question-text';
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                q.options.forEach(option => {
+                    const label = document.createElement('label');
+                    label.className = 'option';
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = `mc-question-${index}`;
+                    input.value = option;
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(option));
+                    optionsDiv.appendChild(label);
+                });
+                questionDiv.appendChild(optionsDiv);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback';
+                feedbackDiv.id = `mc-feedback-${index}`;
+                questionDiv.appendChild(feedbackDiv);
+                
+                mcContainer.appendChild(questionDiv);
+            });
+
+            const fibContainer = document.getElementById('fill-in-blank-container');
+            fibContainer.innerHTML = '';
+            fillInBlankQuestions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.id = `fib-question-${index}`;
+
+                const questionText = document.createElement('p');
+                questionText.className = 'question-text';
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                questionDiv.appendChild(questionText);
+
+                const fillInDiv = document.createElement('div');
+                fillInDiv.className = 'fill-in-blank';
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `fib-input-${index}`;
+                input.placeholder = 'Type your answer here...';
+                fillInDiv.appendChild(input);
+                
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback';
+                feedbackDiv.id = `fib-feedback-${index}`;
+                fillInDiv.appendChild(feedbackDiv);
+
+                questionDiv.appendChild(fillInDiv);
+                fibContainer.appendChild(questionDiv);
+            });
+        }
+        
+        function normalizeAnswer(answer) {
+            return answer.trim().toLowerCase().replace(/[.]/g, '');
+        }
+
+        function checkAnswers() {
+            // Check Multiple Choice
+            multipleChoiceQuestions.forEach((q, index) => {
+                const selectedInput = document.querySelector(`input[name="mc-question-${index}"]:checked`);
+                const feedbackEl = document.getElementById(`mc-feedback-${index}`);
+                const options = document.querySelectorAll(`#mc-question-${index} .option`);
+
+                // Reset styles
+                options.forEach(opt => opt.classList.remove('correct', 'incorrect', 'selected'));
+                feedbackEl.textContent = '';
+                feedbackEl.className = 'feedback';
+
+                if (selectedInput) {
+                    const selectedValue = selectedInput.value;
+                    if (selectedValue === q.correct) {
+                        feedbackEl.textContent = 'Correct! ' + q.explanation;
+                        feedbackEl.classList.add('correct');
+                        selectedInput.parentElement.classList.add('correct');
+                    } else {
+                        feedbackEl.textContent = `Incorrect. The correct answer is "${q.correct}". ` + q.explanation;
+                        feedbackEl.classList.add('incorrect');
+                        selectedInput.parentElement.classList.add('incorrect');
+                        // Highlight correct answer
+                        options.forEach(opt => {
+                            if(opt.textContent.trim() === q.correct) {
+                                opt.classList.add('correct');
+                            }
+                        });
+                    }
+                } else {
+                    feedbackEl.textContent = 'Please select an answer.';
+                    feedbackEl.classList.add('incorrect');
+                }
+            });
+
+            // Check Fill in the Blanks
+            fillInBlankQuestions.forEach((q, index) => {
+                const inputEl = document.getElementById(`fib-input-${index}`);
+                const feedbackEl = document.getElementById(`fib-feedback-${index}`);
+                const userAnswer = inputEl.value;
+
+                inputEl.style.borderColor = 'var(--border-color)';
+                feedbackEl.textContent = '';
+                feedbackEl.className = 'feedback';
+                inputEl.classList.remove('correct', 'incorrect');
+
+
+                if (userAnswer.trim() === '') {
+                    feedbackEl.textContent = 'Please type an answer.';
+                    feedbackEl.classList.add('incorrect');
+                    inputEl.classList.add('incorrect');
+                    return;
+                }
+
+                const normalizedUserAnswer = normalizeAnswer(userAnswer);
+                const isCorrect = q.correct.some(correctAns => normalizeAnswer(correctAns) === normalizedUserAnswer);
+
+                if (isCorrect) {
+                    feedbackEl.textContent = 'Correct! ' + q.explanation;
+                    feedbackEl.classList.add('correct');
+                    inputEl.classList.add('correct');
+                } else {
+                    feedbackEl.textContent = `Incorrect. A correct answer is "${q.correct[0]}". ` + q.explanation;
+                    feedbackEl.classList.add('incorrect');
+                    inputEl.classList.add('incorrect');
+                }
+            });
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestions();
+            document.getElementById('check-answers-btn').addEventListener('click', checkAnswers);
+            
+            // Add event listener for radio buttons to show selection
+            document.querySelectorAll('.option input[type="radio"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const name = e.target.name;
+                    document.querySelectorAll(`input[name="${name}"]`).forEach(otherRadio => {
+                        otherRadio.parentElement.classList.remove('selected');
+                    });
+                    if(e.target.checked) {
+                        e.target.parentElement.classList.add('selected');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
